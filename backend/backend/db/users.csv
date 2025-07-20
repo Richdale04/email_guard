@@ -1,3 +1,0 @@
-token,sub,role,expires_at
-sample_token_1,user1,user,2024-12-31
-sample_token_2,user2,admin,2024-12-31

@@ -10,6 +10,7 @@ models/
 *.onnx
 *.tflite
 *.pb
+!models/install_here
 
 # Python
 __pycache__/

@@ -1,18 +1,11 @@
-# Ignore model files
-*.safetensors
-*.bin
-*.h5
-*.pkl
-*.joblib
-*.pt
-*.pth
-*.onnx
-*.tflite
-*.pb
+# Ignore everything in ai/models
+models/**
 
-# Ignore all files in models/ EXCEPT install_here
-models/*
+# But don't ignore the directory itself (needed so Git sees inside it)
+!models/
+# And don't ignore this specific file
 !models/install_here
+
 
 
 # Python

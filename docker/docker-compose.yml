@@ -1,0 +1,80 @@
+services:
+  # etcd for APISIX configuration storage
+  etcd:
+    image: bitnami/etcd:latest
+    container_name: email-guard-etcd
+    environment:
+      - ALLOW_NONE_AUTHENTICATION=yes
+      - ETCD_ADVERTISE_CLIENT_URLS=http://etcd:2379
+      - ETCD_LISTEN_CLIENT_URLS=http://0.0.0.0:2379
+    ports:
+      - "2379:2379"
+    volumes:
+      - etcd_data:/bitnami/etcd
+    networks:
+      - email-guard-network
+
+  # APISIX Gateway
+  apisix:
+    image: apache/apisix:3.7.0-debian
+    container_name: email-guard-apisix
+    restart: always
+    ports:
+      - "9080:9080"  # API Gateway port
+      - "9180:9180"  # Admin API port
+    volumes:
+      - ./apisix-config.yaml:/usr/local/apisix/conf/config.yaml:ro
+      - ./apisix-routes.yaml:/usr/local/apisix/conf/routes.yaml:ro
+    depends_on:
+      - etcd
+    environment:
+      - APISIX_STAND_ALONE=true
+    networks:
+      - email-guard-network
+    command: sh -c "sleep 10 && /usr/bin/apisix init && /usr/bin/apisix start"
+
+  # Backend API
+  backend:
+    build:
+      context: ../backend
+      dockerfile: ../docker/backend.Dockerfile
+      args:
+        PIP_TIMEOUT: 100
+        PIP_RETRIES: 5
+    container_name: email-guard-backend
+    restart: always
+    ports:
+      - "8000:8000"
+    volumes:
+      - ../backend/db:/app/db
+      - ../backend/scan_history:/app/backend/scan_history
+      - ../ai:/app/ai
+    environment:
+      - PYTHONPATH=/app
+    networks:
+      - email-guard-network
+    depends_on:
+      - apisix
+
+
+
+  # Redis for APISIX rate limiting (optional, for production)
+  redis:
+    image: redis:7-alpine
+    container_name: email-guard-redis
+    restart: always
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - email-guard-network
+    command: redis-server --appendonly yes
+
+volumes:
+  etcd_data:
+  redis_data:
+
+networks:
+  email-guard-network:
+    driver: bridge 

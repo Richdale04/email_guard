@@ -1,5 +1,4 @@
-# AI Models (large files)
-models/
+# Ignore model files
 *.safetensors
 *.bin
 *.h5
@@ -10,7 +9,11 @@ models/
 *.onnx
 *.tflite
 *.pb
+
+# Ignore all files in models/ EXCEPT install_here
+models/*
 !models/install_here
+
 
 # Python
 __pycache__/

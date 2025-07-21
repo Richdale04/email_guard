@@ -1,49 +1,4 @@
 services:
-  # etcd for APISIX configuration storage
-  etcd:
-    image: bitnami/etcd:latest
-    container_name: email-guard-etcd
-    environment:
-      - ALLOW_NONE_AUTHENTICATION=yes
-      - ETCD_ADVERTISE_CLIENT_URLS=http://etcd:2379
-      - ETCD_LISTEN_CLIENT_URLS=http://0.0.0.0:2379
-    ports:
-      - "2379:2379"
-    volumes:
-      - etcd_data:/bitnami/etcd
-    networks:
-      - email-guard-network
-
-  # APISIX Gateway
-  apisix:
-    image: apache/apisix:3.7.0-debian
-    container_name: email-guard-apisix
-    restart: always
-    ports:
-      - "9080:9080"  # API Gateway port
-      - "9180:9180"  # Admin API port
-    volumes:
-      - ./apisix-config.yaml:/usr/local/apisix/conf/config.yaml:ro
-      - ./apisix-routes.yaml:/usr/local/apisix/conf/routes.yaml:ro
-    depends_on:
-      - etcd
-    environment:
-      - APISIX_STAND_ALONE=true
-    networks:
-      - email-guard-network
-    command: sh -c "sleep 10 && /usr/bin/apisix init && /usr/bin/apisix start"
-
-  apisix-init:
-    image: alpine:latest
-    container_name: apisix-init
-    depends_on:
-      - apisix
-    volumes:
-      - ./setup-apisix.sh:/tmp/setup-apisix.sh:ro
-    entrypoint: ["/bin/sh", "-c", "ls -l /tmp && apk add --no-cache curl && sh /tmp/setup-apisix.sh"]
-    networks:
-      - email-guard-network
-
   # Backend API
   backend:
     build:
@@ -67,7 +22,41 @@ services:
     depends_on:
       - apisix
 
+  # etcd for APISIX configuration storage
+  etcd:
+    image: bitnami/etcd:latest
+    container_name: email-guard-etcd
+    environment:
+      - ALLOW_NONE_AUTHENTICATION=yes
+      - ETCD_ADVERTISE_CLIENT_URLS=http://etcd:2379
+      - ETCD_LISTEN_CLIENT_URLS=http://0.0.0.0:2379
+    ports:
+      - "2379:2379"
+    volumes:
+      - etcd_data:/bitnami/etcd
+    networks:
+      - email-guard-network
 
+  # APISIX Gateway
+  apisix:
+    image: apache/apisix:3.7.0-debian
+    container_name: email-guard-apisix
+    user: root
+    restart: always
+    ports:
+      - "9080:9080"  # API Gateway port
+      - "9180:9180"  # Admin API port
+    volumes:
+      - ./apisix-config.yaml:/usr/local/apisix/conf/config.yaml:ro
+      - ./apisix-routes.yaml:/usr/local/apisix/conf/routes.yaml:ro
+      - ./setup-apisix.sh:/tmp/setup-apisix.sh:ro
+    depends_on:
+      - etcd
+    environment:
+      - APISIX_STAND_ALONE=true
+    networks:
+      - email-guard-network
+    command: sh -c "sleep 10 && /usr/bin/apisix init && /usr/bin/apisix start && sleep 5 && apt-get update && apt-get install -y curl && sh /tmp/setup-apisix.sh & /usr/bin/apisix start"
 
   # Redis for APISIX rate limiting (optional, for production)
   redis:

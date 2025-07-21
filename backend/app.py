@@ -1,5 +1,4 @@
 ﻿from fastapi import FastAPI, HTTPException, Depends, Request, Response
-from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 import uvicorn
@@ -14,14 +13,7 @@ from scan import scan_email, save_scan_history, get_scan_history
 
 app = FastAPI(title="Email Guard API", version="1.0.0")
 
-# CORS middleware
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["http://localhost:5173", "http://localhost:3000"],  # React dev server
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
+
 
 # Pydantic models
 class TokenRequest(BaseModel):

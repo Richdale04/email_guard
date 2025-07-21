@@ -52,9 +52,17 @@ logs/
 *.sqlite3
 
 # User data and scan history
-scan_history/
-db/users.csv
+# Ignore all CSV files in db/
 db/*.csv
+
+# But keep this specific file
+!db/usersCSV_here
+
+# Ignore everything in scan_history/
+scan_history/*
+
+# But keep this specific file
+!scan_history/json_here
 
 # Temporary files
 *.tmp

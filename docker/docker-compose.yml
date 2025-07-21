@@ -39,8 +39,8 @@ services:
     depends_on:
       - apisix
     volumes:
-      - ./setup-apisix.sh:/setup-apisix.sh:ro
-    entrypoint: ["/bin/sh", "-c", "ls -l && apk add --no-cache curl && /setup-apisix.sh"]
+      - ./setup-apisix.sh:/tmp/setup-apisix.sh:ro
+    entrypoint: ["/bin/sh", "-c", "ls -l /tmp && apk add --no-cache curl && sh /tmp/setup-apisix.sh"]
     networks:
       - email-guard-network
 

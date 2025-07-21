@@ -1,4 +1,4 @@
-﻿fastapi
+fastapi
 uvicorn[standard]
 python-multipart
 python-jose[cryptography]

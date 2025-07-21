@@ -1,27 +1,27 @@
-﻿#!/bin/bash
+#!/bin/bash
 
-echo "ðŸš€ Setting up APISIX routes for Email Guard..."
+echo "Setting up APISIX routes for Email Guard..."
 
 # Wait for APISIX to be ready
-echo "â³ Waiting for APISIX to be ready..."
-sleep 30
+echo "Waiting for APISIX to be ready..."
+sleep 10
 
 # Function to check if APISIX is ready
-check_apisix() {
-    curl -s -H 'X-API-KEY: edd1c9f034335f136f87ad84b625c8f1' http://localhost:9180/apisix/admin/services > /dev/null
-    return $?
-}
+#check_apisix() {
+#    curl -s -H 'X-API-KEY: edd1c9f034335f136f87ad84b625c8f1' http://localhost:9180/apisix/admin/services > /dev/null
+#    return $?
+#}
 
 # Wait for APISIX admin API
-while ! check_apisix; do
-    echo "â³ APISIX not ready yet, waiting..."
-    sleep 5
-done
+#while ! check_apisix; do
+#    echo "APISIX not ready yet, waiting..."
+#    sleep 5
+#done
 
-echo "âœ… APISIX is ready!"
+#echo "APISIX is ready!"
 
 # Create routes using APISIX Admin API
-echo "ðŸ”§ Configuring APISIX routes..."
+echo "Configuring APISIX routes..."
 
 # Authentication route
 curl -X PUT http://localhost:9180/apisix/admin/routes/1 \
@@ -158,14 +158,14 @@ curl -X PUT http://localhost:9180/apisix/admin/routes/4 \
     }
   }'
 
-echo "âœ… APISIX routes configured successfully!"
+echo "APISIX routes configured successfully!"
 echo ""
-echo "ðŸŒ Access your application:"
+echo "Access your application:"
 echo "   Frontend: http://localhost:3000"
 echo "   API Gateway: http://localhost:9080"
 echo "   APISIX Admin: http://localhost:9180"
 echo ""
-echo "ðŸ”‘ Test tokens:"
+echo "Test tokens:"
 echo "   - sample_token_1 (User)"
 echo "   - sample_token_2 (Admin)"
 echo "   - sample_token_3 (User)"

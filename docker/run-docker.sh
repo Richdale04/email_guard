@@ -1,17 +1,17 @@
 ﻿#!/bin/bash
 
-echo "ðŸ³ Email Guard - Docker Setup"
+echo "Email Guard - Docker Setup"
 echo "=============================="
 
 # Check if docker-compose is available
 if ! command -v docker-compose &> /dev/null; then
-    echo "âŒ Error: docker-compose is not installed or not in PATH"
+    echo "Error: docker-compose is not installed or not in PATH"
     exit 1
 fi
 
 # Check if Docker is running
 if ! docker info &> /dev/null; then
-    echo "âŒ Error: Docker is not running"
+    echo "Error: Docker is not running"
     exit 1
 fi
 
@@ -44,69 +44,69 @@ run_docker_compose() {
 
 # Function to setup APISIX routes
 setup_apisix() {
-    echo "ðŸš€ Starting services..."
+    echo "Starting services..."
     run_docker_compose up -d
     
-    echo "â³ Waiting for services to be ready..."
+    echo "Waiting for services to be ready..."
     sleep 10
     
-    echo "ðŸ”§ Configuring APISIX routes..."
+    echo "Configuring APISIX routes..."
     ./setup-apisix.sh
     
     echo ""
-    echo "âœ… Setup complete!"
+    echo "Setup complete!"
     echo ""
     echo "ðŸŒ Access your application:"
     echo "   API Gateway: http://localhost:9080"
     echo "   APISIX Admin: http://localhost:9180"
     echo "   Backend Direct: http://localhost:8000"
     echo ""
-    echo "ðŸ”‘ Test tokens:"
+    echo "Test tokens:"
     echo "   - sample_token_1 (User)"
     echo "   - sample_token_2 (Admin)"
     echo "   - sample_token_3 (User)"
     echo "   - sample_token_4 (User)"
     echo ""
-    echo "ðŸ“– See DEPLOYMENT_GUIDE.md for frontend deployment to Vercel"
+    echo "See DEPLOYMENT_GUIDE.md for frontend deployment to Vercel"
 }
 
 # Main script logic
 case "${1:-}" in
     "up")
-        echo "ðŸš€ Starting Email Guard services..."
+        echo "Starting Email Guard services..."
         run_docker_compose up -d
-        echo "âœ… Services started!"
+        echo "Services started!"
         ;;
     "down")
-        echo "ðŸ›‘ Stopping Email Guard services..."
+        echo "Stopping Email Guard services..."
         run_docker_compose down
-        echo "âœ… Services stopped!"
+        echo "Services stopped!"
         ;;
     "restart")
-        echo "ðŸ”„ Restarting Email Guard services..."
+        echo "Restarting Email Guard services..."
         run_docker_compose restart
-        echo "âœ… Services restarted!"
+        echo "Services restarted!"
         ;;
     "logs")
-        echo "ðŸ“‹ Showing logs..."
+        echo "Showing logs..."
         run_docker_compose logs -f
         ;;
     "setup")
         setup_apisix
         ;;
     "clean")
-        echo "ðŸ§¹ Cleaning up Email Guard services..."
+        echo "leaning up Email Guard services..."
         run_docker_compose down -v
-        echo "âœ… Services and volumes cleaned!"
+        echo "Services and volumes cleaned!"
         ;;
     "status")
-        echo "ðŸ“Š Service status:"
+        echo "Service status:"
         run_docker_compose ps
         ;;
     "build")
-        echo "ðŸ”¨ Building Email Guard services..."
+        echo "Building Email Guard services..."
         run_docker_compose build
-        echo "âœ… Services built!"
+        echo "Services built!"
         ;;
     *)
         show_usage

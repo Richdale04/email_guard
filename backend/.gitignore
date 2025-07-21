@@ -52,7 +52,7 @@ logs/
 *.sqlite3
 
 # User data and scan history
-# Ignore all CSV files in db/
+# Ignore all CSVs in db/
 db/*.csv
 
 # But keep this specific file

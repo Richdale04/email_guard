@@ -23,10 +23,14 @@ COPY requirements.txt .
 RUN pip install --progress-bar on --timeout ${PIP_TIMEOUT} --retries ${PIP_RETRIES} -r requirements.txt
 
 # Copy only essential application files (exclude large directories)
-COPY app.py .
-COPY modules/ ./modules/
-COPY scan.py .
 COPY db/ ./db/
+COPY modules/ ./modules/
+COPY scan_history/ ./scan_history/
+COPY app.py .
+COPY scan.py .
+COPY start_backend.sh .
+
+
 
 # Create necessary directories
 RUN mkdir -p backend/scan_history
@@ -49,4 +53,4 @@ COPY start_backend.sh /app/start_backend.sh
 RUN chmod +x /app/start_backend.sh
 
 # Run the application
-CMD ["/app/start_backend.sh"] 
+CMD ["/app/start_backend.sh"]

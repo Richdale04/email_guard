@@ -1,4 +1,4 @@
-services:
+﻿services:
   # etcd for APISIX configuration storage
   etcd:
     image: bitnami/etcd:latest
@@ -32,6 +32,17 @@ services:
     networks:
       - email-guard-network
     command: sh -c "sleep 10 && /usr/bin/apisix init && /usr/bin/apisix start"
+
+  apisix-init:
+    image: alpine:latest
+    container_name: apisix-init
+    depends_on:
+      - apisix
+    volumes:
+      - ./setup-apisix.sh:/setup-apisix.sh:ro
+    entrypoint: ["/bin/sh", "-c", "ls -l && apk add --no-cache curl && /setup-apisix.sh"]
+    networks:
+      - email-guard-network
 
   # Backend API
   backend:

@@ -1,4 +1,4 @@
-# Email Guard Implementation Reflection
+﻿# Email Guard Implementation Reflection
 
 ## Project Overview
 

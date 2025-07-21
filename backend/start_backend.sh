@@ -1,14 +1,14 @@
-#!/bin/bash
+﻿#!/bin/bash
 
-echo "🚀 Starting Email Guard Backend..."
+echo "ðŸš€ Starting Email Guard Backend..."
 
 # Check for AI models
-echo "📥 Checking for AI models..."
+echo "ðŸ“¥ Checking for AI models..."
 if [ -d "/app/ai/models/cybersectony-phishing-email-detection-distilbert_v2.1" ] && [ -d "/app/ai/models/aamoshdahal-email-phishing-distilbert-finetuned" ]; then
-    echo "✅ Models already exist in /app/ai/models/"
+    echo "âœ… Models already exist in /app/ai/models/"
     ls -la /app/ai/models/
 else
-    echo "📥 Downloading missing models..."
+    echo "ðŸ“¥ Downloading missing models..."
     cd /app/ai
     git lfs install
     
@@ -23,8 +23,8 @@ else
     fi
 fi
 
-echo "✅ Models ready!"
+echo "âœ… Models ready!"
 
 # Start the application
-echo "🚀 Starting FastAPI server..."
+echo "ðŸš€ Starting FastAPI server..."
 exec uvicorn app:app --host 0.0.0.0 --port 8000

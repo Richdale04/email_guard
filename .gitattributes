@@ -1,4 +1,4 @@
-# Use LF for all text files
+﻿# Use LF for all text files
 * text=auto eol=lf
 
 # Shell scripts

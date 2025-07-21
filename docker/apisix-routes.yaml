@@ -1,4 +1,4 @@
-routes:
+﻿routes:
   - uri: /auth/*
     name: email-guard-auth
     desc: Email Guard Authentication Endpoints

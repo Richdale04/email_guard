@@ -1,4 +1,4 @@
-import sys
+﻿import sys
 import os
 from typing import List, Dict, Any
 import json
@@ -11,9 +11,9 @@ sys.path.append(ai_path)
 
 try:
     from email_guard import analyze_email_with_models
-    print("✅ Successfully imported email_guard")
+    print("âœ… Successfully imported email_guard")
 except ImportError as e:
-    print(f"❌ Failed to import email_guard: {e}")
+    print(f"âŒ Failed to import email_guard: {e}")
     # Fallback if email_guard is not available
     def analyze_email_with_models(email_text: str) -> List[Dict[str, Any]]:
         return []

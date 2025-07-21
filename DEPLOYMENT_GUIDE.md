@@ -1,15 +1,15 @@
-# Email Guard - Deployment Guide
+﻿# Email Guard - Deployment Guide
 
 This guide explains how to deploy the Email Guard application to Vercel (frontend) and Render (backend).
 
 ## Architecture
 
 ```
-┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
-│   Vercel        │    │   Render        │    │   Local/Cloud   │
-│   Frontend      │◄──►│   Backend       │◄──►│   APISIX        │
-│   (React)       │    │   (FastAPI)     │    │   (Optional)    │
-└─────────────────┘    └─────────────────┘    └─────────────────┘
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”    â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”    â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚   Vercel        â”‚    â”‚   Render        â”‚    â”‚   Local/Cloud   â”‚
+â”‚   Frontend      â”‚â—„â”€â”€â–ºâ”‚   Backend       â”‚â—„â”€â”€â–ºâ”‚   APISIX        â”‚
+â”‚   (React)       â”‚    â”‚   (FastAPI)     â”‚    â”‚   (Optional)    â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜    â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜    â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 ```
 
 ## Frontend Deployment (Vercel)

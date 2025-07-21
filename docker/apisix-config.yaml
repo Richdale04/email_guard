@@ -1,4 +1,4 @@
-apisix:
+﻿apisix:
   node_listen: 9080
   enable_heartbeat: true
   enable_admin: true
@@ -9,9 +9,6 @@ apisix:
     - 0.0.0.0/0
   enable_debug: true
   enable_dev_mode: true
-  config_center: yaml
-  yaml_config:
-    path: /usr/local/apisix/conf/apisix.yaml
 
 nginx_config:
   http:

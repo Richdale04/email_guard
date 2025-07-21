@@ -1,15 +1,15 @@
-# Email Guard - Docker Setup with APISIX
+﻿# Email Guard - Docker Setup with APISIX
 
 This document explains how to run the Email Guard application using Docker with APISIX as the API gateway for rate limiting and routing.
 
 ## Architecture
 
 ```
-┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
-│   APISIX        │    │   Backend       │    │   etcd          │
-│   Gateway       │◄──►│   (FastAPI)     │    │   Storage       │
-│   Port: 9080    │    │   Port: 8000    │    │   Port: 2379    │
-└─────────────────┘    └─────────────────┘    └─────────────────┘
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”    â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”    â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚   APISIX        â”‚    â”‚   Backend       â”‚    â”‚   etcd          â”‚
+â”‚   Gateway       â”‚â—„â”€â”€â–ºâ”‚   (FastAPI)     â”‚    â”‚   Storage       â”‚
+â”‚   Port: 9080    â”‚    â”‚   Port: 8000    â”‚    â”‚   Port: 2379    â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜    â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜    â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 ```
 
 **Note**: Frontend is deployed separately to Vercel. See `DEPLOYMENT_GUIDE.md` for details.
@@ -24,17 +24,17 @@ This document explains how to run the Email Guard application using Docker with 
 
 ```
 email_guard_devCursor/
-├── docker/                    # Docker configuration files
-│   ├── docker-compose.yml     # Main Docker Compose file
-│   ├── apisix-config.yaml     # APISIX configuration
-│   ├── apisix-routes.yaml     # APISIX route definitions
-│   ├── setup-apisix.sh        # APISIX setup script
-│   └── backend.Dockerfile     # Backend container definition
-├── run-docker.sh              # Convenience script (Linux/Mac)
-├── run-docker.bat             # Convenience script (Windows)
-├── backend/                   # Backend application code
-├── frontend/                  # Frontend application code
-└── ...
+â”œâ”€â”€ docker/                    # Docker configuration files
+â”‚   â”œâ”€â”€ docker-compose.yml     # Main Docker Compose file
+â”‚   â”œâ”€â”€ apisix-config.yaml     # APISIX configuration
+â”‚   â”œâ”€â”€ apisix-routes.yaml     # APISIX route definitions
+â”‚   â”œâ”€â”€ setup-apisix.sh        # APISIX setup script
+â”‚   â””â”€â”€ backend.Dockerfile     # Backend container definition
+â”œâ”€â”€ run-docker.sh              # Convenience script (Linux/Mac)
+â”œâ”€â”€ run-docker.bat             # Convenience script (Windows)
+â”œâ”€â”€ backend/                   # Backend application code
+â”œâ”€â”€ frontend/                  # Frontend application code
+â””â”€â”€ ...
 ```
 
 ## Quick Start
@@ -285,17 +285,17 @@ For local development without Docker:
 ## File Structure
 
 ```
-├── docker-compose.yml          # Main Docker Compose file
-├── apisix-config.yaml          # APISIX configuration
-├── apisix-routes.yaml          # APISIX routes (reference)
-├── setup-apisix.sh            # APISIX setup script
-├── backend/
-│   ├── Dockerfile             # Backend container
-│   └── ...
-├── frontend/
-│   ├── Dockerfile             # Frontend container
-│   ├── nginx.conf             # Nginx configuration
-│   └── ...
-└── docs/
-    └── README.md              # Main documentation
+â”œâ”€â”€ docker-compose.yml          # Main Docker Compose file
+â”œâ”€â”€ apisix-config.yaml          # APISIX configuration
+â”œâ”€â”€ apisix-routes.yaml          # APISIX routes (reference)
+â”œâ”€â”€ setup-apisix.sh            # APISIX setup script
+â”œâ”€â”€ backend/
+â”‚   â”œâ”€â”€ Dockerfile             # Backend container
+â”‚   â””â”€â”€ ...
+â”œâ”€â”€ frontend/
+â”‚   â”œâ”€â”€ Dockerfile             # Frontend container
+â”‚   â”œâ”€â”€ nginx.conf             # Nginx configuration
+â”‚   â””â”€â”€ ...
+â””â”€â”€ docs/
+    â””â”€â”€ README.md              # Main documentation
 ``` 

@@ -17,15 +17,15 @@ def load_tokens_from_csv() -> Dict[str, Dict[str, Any]]:
     """Load valid tokens from CSV file"""
     tokens = {}
     
-    # Create tokens.csv if it doesn't exist
+    # Create users.csv if it doesn't exist
     if not os.path.exists(TOKENS_FILE):
         os.makedirs(os.path.dirname(TOKENS_FILE), exist_ok=True)
         with open(TOKENS_FILE, 'w', newline='') as file:
             writer = csv.writer(file)
             writer.writerow(['token', 'sub', 'role', 'expires_at'])
             # Add some sample tokens
-            writer.writerow(['sample_token_1', 'user1', 'user', '2024-12-31'])
-            writer.writerow(['sample_token_2', 'user2', 'admin', '2024-12-31'])
+            writer.writerow(['sample_token_1', 'user1', 'user', '2025-12-31'])
+            writer.writerow(['sample_token_2', 'user2', 'admin', '2025-12-31'])
     
     try:
         with open(TOKENS_FILE, 'r', newline='') as file:

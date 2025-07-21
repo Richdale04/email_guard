@@ -111,17 +111,4 @@
   color: #666;
   font-size: 0.9rem;
   margin: 8px 0;
-}
-
-.demo-info {
-  background-color: #f8f9fa;
-  padding: 12px;
-  border-radius: 6px;
-  border-left: 4px solid #667eea;
-  font-size: 0.8rem;
-  line-height: 1.4;
-}
-
-.demo-info strong {
-  color: #333;
 } 

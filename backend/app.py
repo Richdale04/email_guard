@@ -134,6 +134,17 @@ async def get_history(req: Request, limit: int = 10):
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to get history: {str(e)}")
 
+@app.post("/auth/logout")
+async def logout_user(response: Response):
+    """Logout user by clearing the authentication cookie"""
+    response.delete_cookie(
+        key="auth_token",
+        httponly=True,
+        secure=False,  # Set to True in production with HTTPS
+        samesite="lax"
+    )
+    return {"message": "Logged out successfully"}
+
 @app.get("/health")
 async def health_check():
     """Health check endpoint"""

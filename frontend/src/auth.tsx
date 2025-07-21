@@ -78,11 +78,6 @@ const Auth: React.FC<AuthProps> = ({ onAuthSuccess }) => {
         
         <div className="auth-footer">
           <p>Don't have a token? Contact us to purchase access.</p>
-          <p className="demo-info">
-            <strong>Demo Tokens:</strong><br/>
-            • sample_token_1 (User)<br/>
-            • sample_token_2 (Admin)
-          </p>
         </div>
       </div>
     </div>

@@ -116,11 +116,62 @@ function App() {
     localStorage.removeItem('emailGuardScan');
   };
 
+  const renderHeader = () => {
+    if (currentState === 'auth') return null;
+    
+    return (
+      <div className="sticky top-0 z-50 bg-dark-900/90 backdrop-blur-xl border-b border-dark-700/50 shadow-2xl">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center h-16">
+            <div className="flex items-center space-x-4">
+              <div className="w-10 h-10 bg-gradient-to-br from-cyber-500 to-neon-green rounded-xl flex items-center justify-center shadow-lg glow-green">
+                <span className="text-white font-bold text-sm">EG</span>
+              </div>
+              <div>
+                <span className="text-dark-100 font-bold text-xl">Email Guard</span>
+                <div className="text-xs text-dark-400 font-medium">
+                  {currentState === 'scan' ? 'Security Analysis' : 'Dashboard'}
+                </div>
+              </div>
+            </div>
+            <div className="flex items-center space-x-4">
+              <div className="hidden sm:flex items-center space-x-2 text-sm text-dark-400">
+                <div className="w-2 h-2 bg-neon-green rounded-full animate-pulse"></div>
+                <span>System Online</span>
+              </div>
+              <button 
+                onClick={handleLogout} 
+                className="cyber-button-danger text-sm px-4 py-2 flex items-center space-x-2"
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                </svg>
+                <span>Logout</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
   const renderCurrentComponent = () => {
     if (isCheckingAuth) {
       return (
-        <div className="loading-container">
-          <div className="loading-spinner">Loading...</div>
+        <div className="min-h-screen flex items-center justify-center bg-dark-950 relative overflow-hidden">
+          {/* Background Effects */}
+          <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-neon-green/5 rounded-full blur-3xl animate-pulse-slow"></div>
+          <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-neon-blue/5 rounded-full blur-3xl animate-pulse-slow" style={{animationDelay: '1s'}}></div>
+          
+          <div className="flex flex-col items-center space-y-6 relative z-10">
+            <div className="w-16 h-16 bg-gradient-to-br from-cyber-500 to-neon-green rounded-2xl flex items-center justify-center shadow-lg glow-green">
+              <div className="loading-spinner text-white w-8 h-8"></div>
+            </div>
+            <div className="text-center">
+              <div className="text-dark-100 font-semibold text-lg mb-2">Initializing Security System</div>
+              <div className="text-dark-400 text-sm">Loading AI models and security protocols...</div>
+            </div>
+          </div>
         </div>
       );
     }
@@ -130,19 +181,15 @@ function App() {
         return <Auth onAuthSuccess={handleAuthSuccess} />;
       case 'scan':
         return (
-          <div>
-            <div className="header-bar">
-              <button onClick={handleLogout} className="logout-btn">Logout</button>
-            </div>
+          <div className="min-h-screen bg-dark-950">
+            {renderHeader()}
             <Scan onScanComplete={handleScanComplete} />
           </div>
         );
       case 'dashboard':
         return (
-          <div>
-            <div className="header-bar">
-              <button onClick={handleLogout} className="logout-btn">Logout</button>
-            </div>
+          <div className="min-h-screen bg-dark-950">
+            {renderHeader()}
             <EmailAnalysisDashboard
               currentScan={currentScan}
               onNewScan={handleNewScan}

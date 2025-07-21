@@ -1,68 +1,269 @@
-:root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
+/* Tailwind CSS Configuration */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
-
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
-}
-a:hover {
-  color: #535bf2;
-}
-
-body {
-  margin: 0;
-  display: flex;
-  place-items: center;
-  min-width: 320px;
-  min-height: 100vh;
-}
-
-h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
-}
-
-button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  background-color: #1a1a1a;
-  cursor: pointer;
-  transition: border-color 0.25s;
-}
-button:hover {
-  border-color: #646cff;
-}
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
-}
-
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
+@layer base {
+  * {
+    @apply border-gray-200;
   }
-  a:hover {
-    color: #747bff;
+  
+  body {
+    @apply bg-dark-950 text-dark-100 font-sans antialiased;
+    background-image: 
+      radial-gradient(circle at 25% 25%, rgba(0, 255, 136, 0.05) 0%, transparent 50%),
+      radial-gradient(circle at 75% 75%, rgba(0, 212, 255, 0.05) 0%, transparent 50%);
   }
-  button {
-    background-color: #f9f9f9;
+  
+  html {
+    scroll-behavior: smooth;
+  }
+  
+  /* Custom scrollbar */
+  ::-webkit-scrollbar {
+    width: 8px;
+  }
+  
+  ::-webkit-scrollbar-track {
+    @apply bg-dark-800/50;
+  }
+  
+  ::-webkit-scrollbar-thumb {
+    @apply bg-dark-600/50 rounded-full;
+  }
+  
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-dark-500/70;
+  }
+}
+
+@layer components {
+  .cyber-card {
+    @apply bg-dark-900/50 backdrop-blur-sm border border-dark-700/50 rounded-xl shadow-2xl;
+    box-shadow: 
+      0 25px 50px -12px rgba(0, 0, 0, 0.25),
+      0 0 0 1px rgba(14, 165, 233, 0.1),
+      inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  }
+  
+  .cyber-button {
+    @apply bg-gradient-to-r from-cyber-600 to-cyber-500 hover:from-cyber-700 hover:to-cyber-600 
+           text-white font-medium px-6 py-3 rounded-lg transition-all duration-300 
+           shadow-lg hover:shadow-cyber-500/25 hover:scale-105 active:scale-95
+           disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100
+           relative overflow-hidden;
+  }
+  
+  .cyber-button::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.5s;
+  }
+  
+  .cyber-button:hover::before {
+    left: 100%;
+  }
+  
+  .cyber-button-danger {
+    @apply bg-gradient-to-r from-red-600 to-red-500 hover:from-red-700 hover:to-red-600 
+           text-white font-medium px-6 py-3 rounded-lg transition-all duration-300 
+           shadow-lg hover:shadow-red-500/25 hover:scale-105 active:scale-95
+           relative overflow-hidden;
+  }
+  
+  .cyber-button-danger::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.5s;
+  }
+  
+  .cyber-button-danger:hover::before {
+    left: 100%;
+  }
+  
+  .cyber-input {
+    @apply bg-dark-800/50 border border-dark-600/50 rounded-lg px-4 py-3 
+           text-dark-100 placeholder-dark-400 focus:border-cyber-500 focus:ring-2 
+           focus:ring-cyber-500/20 transition-all duration-200 backdrop-blur-sm;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  }
+  
+  .cyber-textarea {
+    @apply bg-dark-800/50 border border-dark-600/50 rounded-lg px-4 py-3 
+           text-dark-100 placeholder-dark-400 focus:border-cyber-500 focus:ring-2 
+           focus:ring-cyber-500/20 transition-all duration-200 backdrop-blur-sm resize-none;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  }
+  
+  .status-badge {
+    @apply px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wider;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  }
+  
+  .status-phishing {
+    @apply bg-red-500/20 text-red-400 border border-red-500/30;
+    box-shadow: 0 0 10px rgba(239, 68, 68, 0.3);
+  }
+  
+  .status-spam {
+    @apply bg-yellow-500/20 text-yellow-400 border border-yellow-500/30;
+    box-shadow: 0 0 10px rgba(245, 158, 11, 0.3);
+  }
+  
+  .status-safe {
+    @apply bg-green-500/20 text-green-400 border border-green-500/30;
+    box-shadow: 0 0 10px rgba(34, 197, 94, 0.3);
+  }
+  
+  .status-error {
+    @apply bg-gray-500/20 text-gray-400 border border-gray-500/30;
+    box-shadow: 0 0 10px rgba(107, 114, 128, 0.3);
+  }
+  
+  .loading-spinner {
+    @apply inline-block w-6 h-6 border-2 border-current border-t-transparent rounded-full animate-spin;
+    animation: spin 1s linear infinite;
+  }
+  
+  .scan-animation {
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .scan-animation::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(0, 255, 136, 0.3), transparent);
+    animation: scan 2s ease-in-out infinite;
+  }
+  
+  /* Enhanced card hover effects */
+  .cyber-card:hover {
+    @apply border-cyber-500/30;
+    box-shadow: 
+      0 25px 50px -12px rgba(0, 0, 0, 0.25),
+      0 0 0 1px rgba(14, 165, 233, 0.2),
+      0 0 20px rgba(14, 165, 233, 0.1),
+      inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  }
+  
+  /* Text selection */
+  ::selection {
+    @apply bg-cyber-500/30 text-dark-50;
+  }
+  
+  /* Focus styles */
+  .cyber-input:focus,
+  .cyber-textarea:focus {
+    @apply border-cyber-500 ring-2 ring-cyber-500/20;
+    box-shadow: 
+      0 0 0 3px rgba(14, 165, 233, 0.1),
+      inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  }
+}
+
+@layer utilities {
+  .text-shadow {
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+  }
+  
+  .text-shadow-lg {
+    text-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+  }
+  
+  .glow-green {
+    box-shadow: 0 0 20px rgba(0, 255, 136, 0.3);
+  }
+  
+  .glow-blue {
+    box-shadow: 0 0 20px rgba(0, 212, 255, 0.3);
+  }
+  
+  .glow-red {
+    box-shadow: 0 0 20px rgba(255, 71, 87, 0.3);
+  }
+  
+  .glow-purple {
+    box-shadow: 0 0 20px rgba(139, 92, 246, 0.3);
+  }
+  
+  /* Backdrop blur utilities */
+  .backdrop-blur-xs {
+    backdrop-filter: blur(2px);
+  }
+  
+  /* Gradient text */
+  .text-gradient {
+    @apply bg-gradient-to-r from-cyber-500 to-neon-green bg-clip-text text-transparent;
+  }
+  
+  /* Animated border */
+  .border-animated {
+    position: relative;
+  }
+  
+  .border-animated::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    padding: 1px;
+    background: linear-gradient(45deg, #0ea5e9, #00ff88, #0ea5e9);
+    border-radius: inherit;
+    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    mask-composite: exclude;
+    animation: border-rotate 3s linear infinite;
+  }
+  
+  @keyframes border-rotate {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+}
+
+/* Custom animations */
+@keyframes scan {
+  0%, 100% { transform: translateX(-100%); }
+  50% { transform: translateX(100%); }
+}
+
+@keyframes glow {
+  0% { 
+    box-shadow: 0 0 5px #00ff88, 0 0 10px #00ff88, 0 0 15px #00ff88;
+    opacity: 0.5;
+  }
+  100% { 
+    box-shadow: 0 0 10px #00ff88, 0 0 20px #00ff88, 0 0 30px #00ff88;
+    opacity: 1;
+  }
+}
+
+@keyframes pulse-slow {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+/* Responsive improvements */
+@media (max-width: 640px) {
+  .cyber-card {
+    @apply rounded-lg;
+  }
+  
+  .cyber-button {
+    @apply px-4 py-2 text-sm;
   }
 }

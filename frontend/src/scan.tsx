@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import './scan.css';
 
 interface ScanProps {
   onScanComplete: (results: any) => void;
@@ -79,74 +78,116 @@ Sarah`
   };
 
   return (
-    <div className="scan-container">
-      <div className="scan-card">
-        <div className="scan-header">
-          <h1>Email Analysis</h1>
-          <p>Paste your email content below for AI-powered security analysis</p>
+    <div className="min-h-screen bg-dark-950 py-12 relative overflow-hidden">
+      {/* Background Effects */}
+      <div className="absolute top-0 left-0 w-full h-full bg-[url('data:image/svg+xml,%3Csvg%20width%3D%2260%22%20height%3D%2260%22%20viewBox%3D%220%200%2060%2060%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Cg%20fill%3D%22none%22%20fill-rule%3D%22evenodd%22%3E%3Cg%20fill%3D%22%230ea5e9%22%20fill-opacity%3D%220.05%22%3E%3Ccircle%20cx%3D%2230%22%20cy%3D%2230%22%20r%3D%221%22%2F%3E%3C%2Fg%3E%3C%2Fg%3E%3C%2Fsvg%3E')] opacity-50"></div>
+      <div className="absolute top-1/4 right-1/4 w-96 h-96 bg-neon-green/5 rounded-full blur-3xl"></div>
+      <div className="absolute bottom-1/4 left-1/4 w-96 h-96 bg-neon-blue/5 rounded-full blur-3xl"></div>
+      
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        <div className="cyber-card p-8 relative">
+          {/* Card Glow Effect */}
+          <div className="absolute inset-0 bg-gradient-to-br from-cyber-500/5 to-neon-green/5 rounded-xl"></div>
+          
+          <div className="text-center mb-10 relative">
+            <div className="flex justify-center mb-6">
+              <div className="w-16 h-16 bg-gradient-to-br from-neon-green to-cyber-500 rounded-2xl flex items-center justify-center shadow-lg glow-green">
+                <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+              </div>
+            </div>
+            <h1 className="text-4xl font-bold text-dark-50 mb-3 text-shadow">Email Analysis</h1>
+            <p className="text-dark-300 text-lg mb-4">Paste your email content below for AI-powered security analysis</p>
+            <div className="w-32 h-1 bg-gradient-to-r from-cyber-500 to-neon-green mx-auto rounded-full"></div>
+          </div>
+          
+          <form onSubmit={handleSubmit} className="space-y-8">
+            <div>
+              <label htmlFor="email-text" className="block text-sm font-medium text-dark-200 mb-4">
+                Email Content
+              </label>
+              <div className="relative">
+                <textarea
+                  id="email-text"
+                  className="cyber-textarea w-full h-80 font-mono text-sm"
+                  value={emailText}
+                  onChange={(e) => setEmailText(e.target.value)}
+                  placeholder="Paste your email content here for analysis..."
+                  required
+                  disabled={loading}
+                />
+                <div className="absolute bottom-4 right-4 text-xs text-dark-400 bg-dark-800/50 px-2 py-1 rounded">
+                  {emailText.length}/10,000 characters
+                </div>
+              </div>
+            </div>
+            
+            <div className="cyber-card p-6 bg-dark-800/30">
+              <p className="text-sm font-medium text-dark-200 mb-4">Try sample emails:</p>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <button 
+                  type="button" 
+                  onClick={() => loadSampleEmail('phishing')}
+                  className="flex items-center justify-center space-x-3 bg-red-500/10 hover:bg-red-500/20 border border-red-500/30 text-red-400 px-6 py-4 rounded-xl transition-all duration-200 text-sm font-medium hover:border-red-400/50 hover:shadow-lg hover:shadow-red-500/10"
+                  disabled={loading}
+                >
+                  <span className="text-lg">🚨</span>
+                  <span>Phishing Sample</span>
+                </button>
+                <button 
+                  type="button" 
+                  onClick={() => loadSampleEmail('spam')}
+                  className="flex items-center justify-center space-x-3 bg-yellow-500/10 hover:bg-yellow-500/20 border border-yellow-500/30 text-yellow-400 px-6 py-4 rounded-xl transition-all duration-200 text-sm font-medium hover:border-yellow-400/50 hover:shadow-lg hover:shadow-yellow-500/10"
+                  disabled={loading}
+                >
+                  <span className="text-lg">⚠️</span>
+                  <span>Spam Sample</span>
+                </button>
+                <button 
+                  type="button" 
+                  onClick={() => loadSampleEmail('safe')}
+                  className="flex items-center justify-center space-x-3 bg-green-500/10 hover:bg-green-500/20 border border-green-500/30 text-green-400 px-6 py-4 rounded-xl transition-all duration-200 text-sm font-medium hover:border-green-400/50 hover:shadow-lg hover:shadow-green-500/10"
+                  disabled={loading}
+                >
+                  <span className="text-lg">✅</span>
+                  <span>Safe Sample</span>
+                </button>
+              </div>
+            </div>
+            
+            {error && (
+              <div className="bg-red-500/10 border border-red-500/30 text-red-400 px-6 py-4 rounded-xl text-sm">
+                <div className="flex items-center space-x-3">
+                  <svg className="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  <span>{error}</span>
+                </div>
+              </div>
+            )}
+            
+            <button 
+              type="submit" 
+              className={`cyber-button w-full flex items-center justify-center space-x-4 text-xl py-6 ${loading ? 'scan-animation' : ''}`}
+              disabled={loading || !emailText.trim()}
+            >
+              {loading ? (
+                <>
+                  <div className="loading-spinner"></div>
+                  <span>Analyzing Email...</span>
+                </>
+              ) : (
+                <>
+                  <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  <span>Analyze Email</span>
+                </>
+              )}
+            </button>
+          </form>
         </div>
-        
-        <form onSubmit={handleSubmit} className="scan-form">
-          <div className="form-group">
-            <label htmlFor="email-text">Email Content</label>
-            <textarea
-              id="email-text"
-              value={emailText}
-              onChange={(e) => setEmailText(e.target.value)}
-              placeholder="Paste your email content here..."
-              rows={12}
-              required
-              disabled={loading}
-            />
-            <div className="char-count">
-              {emailText.length}/10,000 characters
-            </div>
-          </div>
-          
-          <div className="sample-emails">
-            <p>Try sample emails:</p>
-            <div className="sample-buttons">
-              <button 
-                type="button" 
-                onClick={() => loadSampleEmail('phishing')}
-                className="sample-btn phishing"
-                disabled={loading}
-              >
-                Phishing Sample
-              </button>
-              <button 
-                type="button" 
-                onClick={() => loadSampleEmail('spam')}
-                className="sample-btn spam"
-                disabled={loading}
-              >
-                Spam Sample
-              </button>
-              <button 
-                type="button" 
-                onClick={() => loadSampleEmail('safe')}
-                className="sample-btn safe"
-                disabled={loading}
-              >
-                Safe Sample
-              </button>
-            </div>
-          </div>
-          
-          {error && (
-            <div className="error-message">
-              {error}
-            </div>
-          )}
-          
-          <button 
-            type="submit" 
-            className="scan-button"
-            disabled={loading || !emailText.trim()}
-          >
-            {loading ? 'Analyzing...' : 'Analyze Email'}
-          </button>
-        </form>
       </div>
     </div>
   );

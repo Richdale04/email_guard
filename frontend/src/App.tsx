@@ -3,7 +3,6 @@ import Auth from './auth';
 import Scan from './scan';
 import EmailAnalysisDashboard from './email-analysis-dashboard';
 import axios from 'axios';
-import './App.css';
 
 type AppState = 'auth' | 'scan' | 'dashboard';
 

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import Auth from './auth';
 import Scan from './scan';
 import EmailAnalysisDashboard from './email-analysis-dashboard';
@@ -66,7 +66,7 @@ function App() {
   const checkAuthStatus = async () => {
     try {
       // Try to make a request to check if the user is authenticated
-      const response = await axios.get(`${import.meta.env.VITE_API_URL || 'http://localhost:9080'}/health`, {
+      await axios.get(`${import.meta.env.VITE_API_URL || 'http://localhost:9080'}/health`, {
         withCredentials: true
       });
       

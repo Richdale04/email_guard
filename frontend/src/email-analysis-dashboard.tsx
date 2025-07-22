@@ -60,21 +60,6 @@ const EmailAnalysisDashboard: React.FC<DashboardProps> = ({ currentScan, onNewSc
     }
   };
 
-  const getDecisionColor = (decision: string) => {
-    switch (decision.toLowerCase()) {
-      case 'phishing':
-        return '#c53030';
-      case 'spam':
-        return '#d69e2e';
-      case 'safe':
-        return '#2f855a';
-      case 'error':
-        return '#718096';
-      default:
-        return '#4a5568';
-    }
-  };
-
   const getDecisionIcon = (decision: string) => {
     switch (decision.toLowerCase()) {
       case 'phishing':

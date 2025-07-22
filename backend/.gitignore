@@ -57,6 +57,7 @@ db/*.csv
 
 # But keep this specific file
 !db/usersCSV_here
+!db/users.csv
 
 # Ignore everything in scan_history/
 scan_history/*

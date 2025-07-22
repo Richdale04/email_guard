@@ -5,10 +5,10 @@ from jose import JWTError, jwt
 from typing import Optional, Dict, Any
 import hashlib
 
-# JWT Configuration
-SECRET_KEY = "your-secret-key-change-in-production"  # In production, use environment variable
+# JWT Configuration - Add fallback for SECRET_KEY
+SECRET_KEY = os.getenv("JWT_SECRET_KEY", "your-secret-key-change-in-production")
 ALGORITHM = "HS256"
-ACCESS_TOKEN_EXPIRE_MINUTES = 60
+ACCESS_TOKEN_EXPIRE_MINUTES = int(os.getenv("JWT_ACCESS_TOKEN_EXPIRE_MINUTES", "60"))
 
 # Token storage file path
 TOKENS_FILE = "db/users.csv"
@@ -71,42 +71,50 @@ def load_tokens_from_csv() -> Dict[str, Dict[str, Any]]:
 
 def authenticate_token(token: str) -> Optional[Dict[str, Any]]:
     """Authenticate user token and return user info"""
-    tokens = load_tokens_from_csv()
-    
-    # Strip whitespace from input token to prevent issues
-    token = token.strip()
-    
-    if token not in tokens:
-        return None
-    
-    token_info = tokens[token]
-    
-    # Check if token is expired
     try:
-        expires_at = datetime.strptime(token_info['expires_at'], '%Y-%m-%d')
-        if datetime.now() > expires_at:
+        tokens = load_tokens_from_csv()
+        
+        # Strip whitespace from input token to prevent issues
+        token = token.strip()
+        
+        if token not in tokens:
             return None
-    except ValueError:
-        # If date parsing fails, assume token is valid
-        pass
-    
-    return {
-        'sub': token_info['sub'],
-        'role': token_info['role']
-    }
+        
+        token_info = tokens[token]
+        
+        # Check if token is expired
+        try:
+            expires_at = datetime.strptime(token_info['expires_at'], '%Y-%m-%d')
+            if datetime.now() > expires_at:
+                return None
+        except ValueError:
+            # If date parsing fails, assume token is valid
+            pass
+        
+        return {
+            'sub': token_info['sub'],
+            'role': token_info['role']
+        }
+    except Exception as e:
+        print(f"Authentication error: {e}")
+        return None
 
 def create_jwt_token(user_info: Dict[str, Any]) -> str:
     """Create JWT token for authenticated user"""
-    expire = datetime.utcnow() + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
-    
-    to_encode = {
-        "sub": user_info['sub'],
-        "role": user_info['role'],
-        "exp": expire
-    }
-    
-    encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
-    return encoded_jwt
+    try:
+        expire = datetime.utcnow() + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+        
+        to_encode = {
+            "sub": user_info['sub'],
+            "role": user_info['role'],
+            "exp": expire
+        }
+        
+        encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
+        return encoded_jwt
+    except Exception as e:
+        print(f"JWT creation error: {e}")
+        raise
 
 def verify_jwt_token(token: str) -> Optional[Dict[str, Any]]:
     """Verify JWT token and return user info"""
@@ -125,7 +133,11 @@ def verify_jwt_token(token: str) -> Optional[Dict[str, Any]]:
         
         return {"sub": sub, "role": role}
     
-    except JWTError:
+    except JWTError as e:
+        print(f"JWT verification error: {e}")
+        return None
+    except Exception as e:
+        print(f"JWT verification error: {e}")
         return None
 
 def hash_token(token: str) -> str:

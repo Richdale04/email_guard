@@ -14,4 +14,4 @@ requests
 aiofiles
 redis
 httpx
-phishing-detector
+phishing-detection-py

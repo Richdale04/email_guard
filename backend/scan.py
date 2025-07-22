@@ -1,4 +1,4 @@
-﻿import sys
+import sys
 import os
 from typing import List, Dict, Any
 import json
@@ -8,27 +8,30 @@ from datetime import datetime
 ai_path = '/app/ai'
 sys.path.append(ai_path)
 
-
+# Try to import email_guard
 try:
     from email_guard import analyze_email_with_models
-    print("âœ… Successfully imported email_guard")
+    print("Successfully imported email_guard")
+    EMAIL_GUARD_AVAILABLE = True
 except ImportError as e:
-    print(f"âŒ Failed to import email_guard: {e}")
-    # Fallback if email_guard is not available
-    def analyze_email_with_models(email_text: str) -> List[Dict[str, Any]]:
-        return []
+    print(f"Failed to import email_guard: {e}")
+    EMAIL_GUARD_AVAILABLE = False
 
 def scan_email(email_text: str) -> List[Dict[str, Any]]:
     """
-    Scan email text using multiple AI models
+    Scan email text using available AI models
     
     Args:
         email_text: Sanitized email text to analyze
         
     Returns:
-        List of model results with required fields
+        List of model results with required fields (only successful analyses)
     """
     try:
+        # Only use email_guard if available
+        if not EMAIL_GUARD_AVAILABLE:
+            return []
+        
         # Get results from AI models
         model_results = analyze_email_with_models(email_text)
         
@@ -44,100 +47,12 @@ def scan_email(email_text: str) -> List[Dict[str, Any]]:
             }
             validated_results.append(validated_result)
         
-        # If no AI models are available, provide fallback analysis
-        if not validated_results:
-            validated_results = fallback_analysis(email_text)
-        
         return validated_results
     
     except Exception as e:
-        # Return error result if analysis fails
-        return [{
-            'model_source': 'system',
-            'model_name': 'error_handler',
-            'decision': 'error',
-            'confidence': 0.0,
-            'description': f'Analysis failed: {str(e)}'
-        }]
-
-def fallback_analysis(email_text: str) -> List[Dict[str, Any]]:
-    """
-    Fallback analysis when AI models are not available
-    
-    Args:
-        email_text: Email text to analyze
-        
-    Returns:
-        List of basic analysis results
-    """
-    from modules.verify import extract_email_metadata, detect_suspicious_patterns
-    
-    # Extract metadata
-    metadata = extract_email_metadata(email_text.lower())
-    suspicious_patterns = detect_suspicious_patterns(email_text)
-    
-    results = []
-    
-    # Basic rule-based analysis
-    risk_score = 0
-    risk_factors = []
-    
-    # Check for suspicious patterns
-    if 'urgency' in suspicious_patterns:
-        risk_score += 30
-        risk_factors.append('Urgency indicators detected')
-    
-    if 'financial_request' in suspicious_patterns:
-        risk_score += 40
-        risk_factors.append('Financial request detected')
-    
-    if 'personal_info_request' in suspicious_patterns:
-        risk_score += 50
-        risk_factors.append('Personal information request detected')
-    
-    if 'suspicious_domain' in suspicious_patterns:
-        risk_score += 60
-        risk_factors.append('Suspicious domain detected')
-    
-    # Check metadata
-    if metadata['urgency_indicators'] > 0:
-        risk_score += metadata['urgency_indicators'] * 10
-        risk_factors.append(f'{metadata["urgency_indicators"]} urgency indicators')
-    
-    if metadata['money_indicators'] > 0:
-        risk_score += metadata['money_indicators'] * 15
-        risk_factors.append(f'{metadata["money_indicators"]} financial indicators')
-    
-    # Determine decision based on risk score
-    if risk_score >= 70:
-        decision = 'phishing'
-        confidence = min(risk_score / 100.0, 0.95)
-    elif risk_score >= 40:
-        decision = 'spam'
-        confidence = min(risk_score / 70.0, 0.85)
-    else:
-        decision = 'safe'
-        confidence = max(1.0 - (risk_score / 40.0), 0.6)
-    
-    # Create result
-    results.append({
-        'model_source': 'rule_based',
-        'model_name': 'basic_analyzer',
-        'decision': decision,
-        'confidence': confidence,
-        'description': f'Risk score: {risk_score}/100. Factors: {", ".join(risk_factors) if risk_factors else "No suspicious patterns detected"}'
-    })
-    
-    # Add metadata analysis
-    results.append({
-        'model_source': 'metadata',
-        'model_name': 'content_analyzer',
-        'decision': 'info',
-        'confidence': 0.9,
-        'description': f'Content analysis: {metadata["word_count"]} words, {metadata["char_count"]} characters, URLs: {metadata["has_urls"]}, Emails: {metadata["has_email_addresses"]}'
-    })
-    
-    return results
+        # Return empty list if analysis fails (no fallback)
+        print(f"Email analysis failed: {e}")
+        return []
 
 def save_scan_history(user_id: str, email_text: str, results: List[Dict[str, Any]]) -> str:
     """

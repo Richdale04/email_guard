@@ -36,6 +36,8 @@ A comprehensive web application that analyzes email content using multiple AI an
                                               └─────────────────┘
 ```
 
+**🌐 Live Demo**: [https://email-guard-cyan.vercel.app/](https://email-guard-cyan.vercel.app/)
+
 ## 📊 User Journey
 
 1. **Authentication**: User enters purchased token on auth page
@@ -130,6 +132,7 @@ cd ..
 ```
 
 **Access Points:**
+- **Frontend (Production)**: [https://email-guard-cyan.vercel.app/](https://email-guard-cyan.vercel.app/)
 - **API Gateway**: http://localhost:9080
 - **APISIX Admin**: http://localhost:9180
 - **Backend Direct**: http://localhost:8000
@@ -381,6 +384,8 @@ curl http://localhost:8000/health
 ### Production Deployment
 
 #### Frontend (Vercel)
+The frontend is deployed on Vercel and accessible at: **[https://email-guard-cyan.vercel.app/](https://email-guard-cyan.vercel.app/)**
+
 ```bash
 # Connect GitHub repository to Vercel
 # Set environment variables:

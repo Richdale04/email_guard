@@ -1,285 +1,435 @@
-﻿# Email Guard - Deployment Guide
+# Email Guard - Deployment Guide
 
-This guide explains how to deploy the Email Guard application to Vercel (frontend) and Render (backend).
+This guide explains how to deploy the Email Guard application for both local development and production environments.
 
-## Architecture
+## ⚠️ Important Notice: Architecture Complexity
 
-```
-â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”    â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”    â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
-â”‚   Vercel        â”‚    â”‚   Render        â”‚    â”‚   Local/Cloud   â”‚
-â”‚   Frontend      â”‚â—„â”€â”€â–ºâ”‚   Backend       â”‚â—„â”€â”€â–ºâ”‚   APISIX        â”‚
-â”‚   (React)       â”‚    â”‚   (FastAPI)     â”‚    â”‚   (Optional)    â”‚
-â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜    â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜    â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
-```
+**This full-featured version of Email Guard is designed for local deployment and enterprise environments.** The application architecture includes:
 
-## Frontend Deployment (Vercel)
+- **Multiple AI/ML Models**: DistilBERT models, rule-based analysis, and custom ML models
+- **APISIX API Gateway**: Advanced rate limiting, load balancing, and security features
+- **Docker Containerization**: Multi-container setup with etcd storage
+- **Complex Dependencies**: Transformers, PyTorch, and large model files
 
-### 1. Prepare Frontend for Vercel
+**For free-tier deployment services (Render, Railway, etc.), this architecture is too resource-intensive.**
 
-The frontend is already configured for Vercel deployment with:
-- `vercel.json` - Vercel configuration
-- Environment variable support for API URLs
-- Build configuration for Vite
+### Why This Architecture is Complex
 
-### 2. Deploy to Vercel
+The current implementation includes:
+- **Large ML Models**: DistilBERT models require significant memory (2-4GB per model)
+- **APISIX Gateway**: Enterprise-grade API gateway with etcd dependency
+- **Multiple Containers**: Backend, APISIX, etcd, and model loading services
+- **Real-time Model Loading**: Models are loaded into memory during startup
 
-#### Option A: Vercel CLI
+**This project is tested and optimized for local deployment. For public online deployment, you only need to copy the backend services (FastAPI, Docker, AI folders) to your server, run docker-compose to initiate services and configuration, then use the server endpoint in the environment variable of the React Frontend called `VITE_API_URL`.**
+
+## Recommended Deployment Strategy
+
+### Option 1: Local Development (Recommended)
+- **Use Case**: Development, testing, personal use
+- **Setup**: Docker Compose with APISIX gateway
+- **Resources**: Requires 4GB+ RAM, 10GB+ storage
+
+### Option 2: Production Server Deployment
+- **Use Case**: Public online deployment
+- **Setup**: VPS/Cloud server with Docker
+- **Resources**: 2GB+ RAM, 20GB+ storage
+
+### Option 3: Lightweight Version
+- **Use Case**: Free-tier deployment services
+- **Alternative**: [Email-Guard-Lightweight](https://github.com/Richdale04/Email-Guard-Lightweight)
+- **Features**: Simplified backend, Replit-compatible, fewer AI models
+
+## Local Development Setup
+
+### Prerequisites
+- Docker & Docker Compose
+- 4GB+ RAM available
+- 20GB+ free disk space
+
+### Quick Start
+
+1. **Clone the repository**:
+   ```bash
+   git clone https://github.com/your-username/email-guard.git
+   cd email-guard
+   ```
+
+2. **Start all services**:
+   ```bash
+   cd docker
+   ./run-docker.sh setup
+   ```
+
+3. **Access the application**:
+   - Frontend: http://localhost:5173
+   - API Gateway: http://localhost:9080
+   - Backend: http://localhost:8000
+
+## Environment Variables
+
+### Frontend (React/Vite)
 ```bash
-# Install Vercel CLI
-npm i -g vercel
-
-# Navigate to frontend directory
-cd frontend
-
-# Deploy
-vercel
-
-# Follow the prompts:
-# - Link to existing project or create new
-# - Set project name
-# - Set environment variables
+# .env file in frontend directory
+VITE_API_URL=http://localhost:9080  # Points to APISIX gateway
 ```
 
-#### Option B: Vercel Dashboard
-1. Go to [vercel.com](https://vercel.com)
-2. Create new project
-3. Connect your GitHub repository
-4. Set root directory to `frontend`
-5. Configure environment variables
-
-### 3. Environment Variables
-
-Set these environment variables in Vercel:
-
-```
-VITE_API_URL=https://your-backend-url.onrender.com
-```
-
-### 4. Build Settings
-
-Vercel will automatically detect the Vite configuration:
-- **Framework Preset**: Vite
-- **Build Command**: `npm run build`
-- **Output Directory**: `dist`
-- **Install Command**: `npm install`
-
-## Backend Deployment (Render)
-
-### 1. Prepare Backend for Render
-
-The backend is already configured for Render deployment with:
-- `Dockerfile` - Container configuration
-- `requirements.txt` - Python dependencies
-- Health check endpoint
-
-### 2. Deploy to Render
-
-#### Option A: Render Dashboard
-1. Go to [render.com](https://render.com)
-2. Create new Web Service
-3. Connect your GitHub repository
-4. Configure the service:
-
-**Basic Settings:**
-- **Name**: `email-guard-backend`
-- **Environment**: `Docker`
-- **Region**: Choose closest to your users
-- **Branch**: `main`
-
-**Build & Deploy:**
-- **Build Command**: Leave empty (uses Dockerfile)
-- **Start Command**: Leave empty (uses Dockerfile CMD)
-
-**Environment Variables:**
-```
-SECRET_KEY=your-secret-key-here
-CORS_ORIGINS=https://your-frontend-domain.vercel.app
-```
-
-### 3. Environment Variables
-
-Set these environment variables in Render:
-
-```
-# Security
+### Backend (FastAPI)
+```bash
+# Environment variables for backend container
 SECRET_KEY=your-super-secret-key-change-this
-
-# CORS (replace with your Vercel domain)
-CORS_ORIGINS=https://your-app.vercel.app
-
-# Optional: Database URL (if using external database)
-DATABASE_URL=your-database-url
-
-# Optional: Redis URL (if using external Redis)
-REDIS_URL=your-redis-url
+CORS_ORIGINS=http://localhost:5173,http://localhost:3000
+JWT_ALGORITHM=HS256
+ACCESS_TOKEN_EXPIRE_MINUTES=60
+LOG_LEVEL=INFO
 ```
 
-### 4. Health Check
-
-Render will use the health check endpoint:
-- **Health Check Path**: `/health`
-- **Health Check Timeout**: 180 seconds
-
-## Production Configuration
-
-### 1. Update CORS Settings
-
-Update the backend CORS configuration for production:
-
-```python
-# In backend/app.py
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=[
-        "https://your-app.vercel.app",  # Your Vercel domain
-        "http://localhost:5173",        # Local development
-    ],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
+### APISIX Gateway
+```bash
+# APISIX configuration (in apisix-config.yaml)
+ADMIN_KEY=edd1c9f034335f136f87ad84b625c8f1
+NODE_LISTEN=9080
+ADMIN_LISTEN=9180
+ETCD_HOST=etcd
+ETCD_PORT=2379
 ```
 
-### 2. Secure JWT Configuration
+### Docker Services (docker-compose.yml)
+```bash
+# Backend service
+SECRET_KEY=your-super-secret-key-change-this
+CORS_ORIGINS=http://localhost:5173,http://localhost:3000
+JWT_ALGORITHM=HS256
+ACCESS_TOKEN_EXPIRE_MINUTES=60
 
-Update JWT settings for production:
+# APISIX service
+ADMIN_KEY=edd1c9f034335f136f87ad84b625c8f1
+NODE_LISTEN=9080
+ADMIN_LISTEN=9180
 
-```python
-# In backend/modules/authenticate.py
-SECRET_KEY = os.getenv("SECRET_KEY", "your-secret-key-change-in-production")
+# ETCD service
+ETCD_HOST=etcd
+ETCD_PORT=2379
 ```
 
-### 3. Database Configuration
-
-For production, consider using an external database:
-
-```python
-# Add to requirements.txt
-# psycopg2-binary==2.9.7  # For PostgreSQL
-# pymongo==4.5.0          # For MongoDB
+### AI Models Configuration
+```bash
+# Model loading configuration (in ai/email_guard.py)
+MODELS_DIR=/app/ai/models/
+ML_AVAILABLE=True
+PHISHING_DETECTOR_AVAILABLE=True
 ```
 
-## Deployment Steps
+## Production Server Deployment
 
-### 1. Deploy Backend First
+### Server Requirements
+- **OS**: Ubuntu 20.04+ or CentOS 8+
+- **RAM**: 2GB+ (4GB recommended)
+- **Storage**: 20GB+ (for models and data)
+- **CPU**: 2+ cores
 
-1. Push your code to GitHub
-2. Create Render Web Service
-3. Configure environment variables
-4. Deploy and get the backend URL
+### Deployment Steps
 
-### 2. Deploy Frontend
+1. **Prepare the server**:
+   ```bash
+   # Update system
+   sudo apt update && sudo apt upgrade -y
+   
+   # Install Docker
+   curl -fsSL https://get.docker.com -o get-docker.sh
+   sudo sh get-docker.sh
+   
+   # Install Docker Compose
+   sudo curl -L "https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+   sudo chmod +x /usr/local/bin/docker-compose
+   ```
 
-1. Set `VITE_API_URL` to your Render backend URL
-2. Deploy to Vercel
-3. Test the connection
+2. **Deploy the application**:
+   ```bash
+   # Clone repository
+   git clone https://github.com/your-username/email-guard.git
+   cd email-guard
+   
+   # Copy backend services to server
+   cp -r backend/ /opt/email-guard/
+   cp -r ai/ /opt/email-guard/
+   cp -r docker/ /opt/email-guard/
+   
+   # Navigate to deployment directory
+   cd /opt/email-guard/docker
+   ```
 
-### 3. Test the Application
+3. **Configure environment variables**:
+   ```bash
+   # Create environment file
+   cat > .env << EOF
+   SECRET_KEY=$(openssl rand -hex 32)
+   CORS_ORIGINS=https://your-frontend-domain.com
+   JWT_ALGORITHM=HS256
+   ACCESS_TOKEN_EXPIRE_MINUTES=60
+   ADMIN_KEY=$(openssl rand -hex 32)
+   EOF
+   ```
 
-1. Visit your Vercel frontend URL
-2. Try authenticating with test tokens
-3. Test email scanning functionality
-4. Check history functionality
+4. **Start services**:
+   ```bash
+   # Build and start
+   docker-compose up -d --build
+   
+   # Configure APISIX routes
+   chmod +x setup-apisix.sh
+   ./setup-apisix.sh
+   ```
 
-## Environment Variables Reference
+5. **Configure frontend**:
+   ```bash
+   # Set VITE_API_URL to your server endpoint
+   # Example: VITE_API_URL=https://your-server-ip:9080
+   ```
 
-### Frontend (Vercel)
+### Production Environment Variables
+
+#### Backend Container
+```bash
+SECRET_KEY=your-super-secret-key-change-this
+CORS_ORIGINS=https://your-frontend-domain.com
+JWT_ALGORITHM=HS256
+ACCESS_TOKEN_EXPIRE_MINUTES=60
+LOG_LEVEL=INFO
 ```
-VITE_API_URL=https://your-backend-url.onrender.com
+
+#### APISIX Gateway
+```bash
+ADMIN_KEY=your-apisix-admin-key
+NODE_LISTEN=9080
+ADMIN_LISTEN=9180
+ETCD_HOST=etcd
+ETCD_PORT=2379
 ```
 
-### Backend (Render)
-```
-SECRET_KEY=your-super-secret-key
-CORS_ORIGINS=https://your-app.vercel.app
-DATABASE_URL=your-database-url (optional)
-REDIS_URL=your-redis-url (optional)
+#### Frontend (Vercel/Netlify)
+```bash
+VITE_API_URL=https://your-server-ip:9080
 ```
 
-## Monitoring and Logs
+## Frontend Deployment (Vercel/Netlify)
 
-### Vercel
-- **Logs**: Available in Vercel dashboard
-- **Analytics**: Built-in performance monitoring
-- **Functions**: Serverless function logs
+### Vercel Deployment
 
-### Render
-- **Logs**: Available in Render dashboard
-- **Metrics**: CPU, memory, and request metrics
-- **Health Checks**: Automatic health monitoring
+1. **Connect repository**:
+   - Go to [vercel.com](https://vercel.com)
+   - Import your GitHub repository
+   - Set root directory to `frontend`
+
+2. **Configure environment variables**:
+   ```
+   VITE_API_URL=https://your-backend-server:9080
+   ```
+
+3. **Build settings**:
+   - Framework Preset: Vite
+   - Build Command: `npm run build`
+   - Output Directory: `dist`
+
+### Netlify Deployment
+
+1. **Connect repository**:
+   - Go to [netlify.com](https://netlify.com)
+   - Connect your GitHub repository
+   - Set build directory to `frontend`
+
+2. **Configure environment variables**:
+   ```
+   VITE_API_URL=https://your-backend-server:9080
+   ```
+
+3. **Build settings**:
+   - Build Command: `cd frontend && npm run build`
+   - Publish Directory: `frontend/dist`
+
+## Service Management
+
+### Using Convenience Scripts
+```bash
+# Start all services
+./run-docker.sh up
+
+# Stop all services
+./run-docker.sh down
+
+# View logs
+./run-docker.sh logs
+
+# Check status
+./run-docker.sh status
+
+# Restart services
+./run-docker.sh restart
+```
+
+### Manual Commands
+```bash
+# Navigate to docker directory
+cd docker
+
+# Start services
+docker-compose up -d
+
+# View logs
+docker-compose logs -f
+
+# Stop services
+docker-compose down
+
+# Rebuild services
+docker-compose up -d --build
+```
+
+## Monitoring and Health Checks
+
+### Health Check Endpoints
+- **Backend**: `GET /health`
+- **APISIX**: `GET /apisix/admin/services`
+- **Models Status**: `GET /models/status`
+- **Frontend**: Built-in Vite dev server health
+
+### Log Monitoring
+```bash
+# Backend logs
+docker-compose logs -f backend
+
+# APISIX logs
+docker-compose logs -f apisix
+
+# All services
+docker-compose logs -f
+```
+
+### Performance Monitoring
+- **APISIX Metrics**: Available at `/apisix/admin/metrics`
+- **Backend Metrics**: Built-in FastAPI metrics
+- **Resource Usage**: `docker stats`
 
 ## Troubleshooting
 
 ### Common Issues
 
-1. **CORS Errors**
-   - Check `CORS_ORIGINS` environment variable
-   - Ensure frontend domain is included
-   - Verify `allow_credentials=True`
+1. **Port Conflicts**
+   ```bash
+   # Check port usage
+   sudo netstat -tulpn | grep :9080
+   
+   # Change ports in docker-compose.yml if needed
+   ```
 
-2. **Authentication Failures**
-   - Check `SECRET_KEY` is set correctly
-   - Verify JWT token expiration settings
-   - Check token validation logic
+2. **Model Loading Issues**
+   ```bash
+   # Check model files
+   docker-compose exec backend ls -la /app/ai/models/
+   
+   # Rebuild models
+   docker-compose down
+   docker-compose up -d --build
+   ```
 
-3. **Build Failures**
-   - Check `requirements.txt` for missing dependencies
-   - Verify Dockerfile configuration
-   - Check build logs in Render dashboard
+3. **APISIX Configuration Issues**
+   ```bash
+   # Reconfigure APISIX
+   ./setup-apisix.sh
+   
+   # Check routes
+   curl http://localhost:9180/apisix/admin/routes
+   ```
 
-4. **Frontend API Connection**
-   - Verify `VITE_API_URL` is correct
-   - Check network connectivity
-   - Test API endpoints directly
+4. **CORS Errors**
+   - Verify `CORS_ORIGINS` environment variable
+   - Check frontend `VITE_API_URL` setting
+   - Ensure APISIX CORS plugin is configured
 
 ### Debug Commands
-
 ```bash
 # Test backend health
-curl https://your-backend-url.onrender.com/health
+curl http://localhost:8000/health
+
+# Test APISIX gateway
+curl http://localhost:9080/health
+
+# Test models status
+curl http://localhost:9080/models/status
 
 # Test authentication
-curl -X POST https://your-backend-url.onrender.com/auth/token \
+curl -X POST http://localhost:9080/auth/token \
   -H "Content-Type: application/json" \
   -d '{"token": "sample_token_1"}'
 
-# Check CORS headers
-curl -H "Origin: https://your-app.vercel.app" \
-  -H "Access-Control-Request-Method: POST" \
-  -H "Access-Control-Request-Headers: Content-Type" \
-  -X OPTIONS https://your-backend-url.onrender.com/auth/token
+# Check APISIX routes
+curl http://localhost:9180/apisix/admin/routes
 ```
 
 ## Security Considerations
 
 ### Production Security
-1. **Use strong SECRET_KEY**
-2. **Enable HTTPS only**
-3. **Configure proper CORS origins**
-4. **Use environment variables for secrets**
-5. **Enable security headers**
-6. **Regular dependency updates**
+1. **Change default secrets**:
+   - `SECRET_KEY` for JWT
+   - `ADMIN_KEY` for APISIX
+   - Database passwords
+
+2. **Network security**:
+   - Use HTTPS with SSL certificates
+   - Configure firewall rules
+   - Restrict admin access
+
+3. **Container security**:
+   - Regular base image updates
+   - Non-root user execution
+   - Resource limits
 
 ### Rate Limiting
-For production without APISIX, consider:
-- Cloudflare rate limiting
-- Render's built-in rate limiting
-- Custom rate limiting middleware
+APISIX provides built-in rate limiting:
+- **Authentication**: 5 requests per 7 minutes per IP
+- **Scanning**: 20 requests per minute per IP
+- **History**: 30 requests per minute per IP
+- **Models Status**: 60 requests per minute per IP
 
 ## Cost Optimization
 
-### Vercel
-- Free tier: 100GB bandwidth/month
-- Pro plan: $20/month for more features
+### Resource Requirements
+- **Development**: 4GB RAM, 10GB storage
+- **Production**: 2GB+ RAM, 20GB+ storage
+- **Bandwidth**: Depends on usage patterns
 
-### Render
-- Free tier: 750 hours/month
-- Starter plan: $7/month for always-on service
+### Scaling Considerations
+- **Horizontal scaling**: Multiple backend instances
+- **Load balancing**: APISIX handles distribution
+- **Caching**: Redis for session management
+- **CDN**: For static frontend assets
+
+## Alternative: Lightweight Version
+
+For free-tier deployment services, use the lightweight version:
+- **Repository**: [Email-Guard-Lightweight](https://github.com/Richdale04/Email-Guard-Lightweight)
+- **Features**: Simplified backend, Replit-compatible, fewer AI models
+- **Deployment**: Works on Render, Railway, Replit free tiers
+- **Trade-offs**: Fewer AI models, basic rate limiting, no APISIX gateway
+
+## Support and Maintenance
+
+### Regular Maintenance
+1. **Update dependencies**: Monthly security updates
+2. **Monitor logs**: Check for errors and performance issues
+3. **Backup data**: Regular backups of scan history
+4. **Security patches**: Keep Docker images updated
+
+### Getting Help
+- **Issues**: Create GitHub issues for bugs
+- **Documentation**: Check project README files
+- **Community**: Join project discussions
+- **Security**: Report security issues privately
 
 ## Next Steps
 
-1. **Database**: Consider adding PostgreSQL for persistent data
-2. **Caching**: Add Redis for session management
-3. **Monitoring**: Set up error tracking (Sentry)
-4. **CDN**: Configure CDN for static assets
-5. **SSL**: Ensure HTTPS is properly configured 
+1. **Database**: Add PostgreSQL for persistent data
+2. **Caching**: Implement Redis for session management
+3. **Monitoring**: Set up comprehensive monitoring
+4. **SSL**: Configure HTTPS certificates
+5. **Backup**: Implement automated backup strategy

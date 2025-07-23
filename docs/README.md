@@ -15,11 +15,11 @@ A comprehensive web application that analyzes email content using multiple AI an
 
 ```
 ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
-│   React Frontend│    │  APISIX Gateway │    │  FastAPI Backend│
+│  React Frontend │    │  APISIX Gateway │    │  FastAPI Backend│
 │                 │    │                 │    │                 │
-│  - Authentication│◄──►│  - Rate Limiting│◄──►│  - JWT Auth     │
-│  - Email Scanner │    │  - Load Balance │    │  - Input Verify │
-│  - Dashboard     │    │  - SSL/TLS      │    │  - AI Analysis  │
+│ - Authentication│◄──►│  - Rate Limiting│◄──►│  - JWT Auth     │
+│ - Email Scanner │    │  - Load Balance │    │  - Input Verify │
+│ - Dashboard     │    │  - SSL/TLS      │    │  - AI Analysis  │
 └─────────────────┘    └─────────────────┘    └─────────────────┘
                                                        │
                                               ┌─────────────────┐

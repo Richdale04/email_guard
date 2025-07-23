@@ -1,0 +1,15 @@
+{
+  "id": "user1_20250723_090431",
+  "user_id": "user1",
+  "timestamp": "2025-07-23T09:04:31.269710",
+  "email_snippet": "Hi John,\n\nThanks for your email regarding the project update. I've reviewed the documents you sent and everything looks good.\n\nLet's schedule a meeting next week to discuss the next steps. I'm availab...",
+  "results": [
+    {
+      "model_source": "built-in",
+      "model_name": "rule-based",
+      "decision": "safe",
+      "confidence": 1.0,
+      "description": "Risk score: 0/100. No suspicious patterns detected. Email appears to be safe based on rule-based analysis."
+    }
+  ]
+}

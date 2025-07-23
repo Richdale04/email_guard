@@ -1,0 +1,22 @@
+{
+  "id": "user1_20250723_090450",
+  "user_id": "user1",
+  "timestamp": "2025-07-23T09:04:50.389402",
+  "email_snippet": "Dear Customer,\n\nYour account has been suspended due to suspicious activity detected on your account. \nThis is URGENT and requires immediate attention.\n\nPlease click here to verify your identity and re...",
+  "results": [
+    {
+      "model_source": "PyPI",
+      "model_name": "phishing-detection-py",
+      "decision": "unknown",
+      "confidence": 0.85,
+      "description": "No description available"
+    },
+    {
+      "model_source": "built-in",
+      "model_name": "rule-based",
+      "decision": "phishing",
+      "confidence": 0.95,
+      "description": "Risk score: 170/100. Detected factors: Urgency indicators detected, Financial request detected, Personal information request detected, 2 urgency indicators, 2 financial indicators. This analysis is based on pattern matching and content analysis."
+    }
+  ]
+}

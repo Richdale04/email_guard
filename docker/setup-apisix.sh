@@ -71,7 +71,13 @@ curl -X PUT http://localhost:9180/apisix/admin/routes/2 \
       "type": "roundrobin",
       "nodes": {
         "backend:8000": 1
-      }
+      },
+      "timeout": {
+        "connect": 30,
+        "send": 300,
+        "read": 300
+      },
+      "retries": 1
     },
     "plugins": {
       "limit-count": {
@@ -105,6 +111,39 @@ curl -X PUT http://localhost:9180/apisix/admin/routes/3 \
       "type": "roundrobin",
       "nodes": {
         "backend:8000": 1
+      },
+      "timeout": {
+        "connect": 30,
+        "send": 60,
+        "read": 60
+      },
+      "retries": 1
+    },
+    "plugins": {
+      "cors": {
+        "allow_origins": "http://localhost:5173",
+        "allow_methods": "GET,POST,PUT,DELETE,OPTIONS",
+        "allow_headers": "Authorization,Content-Type,Accept,Origin,X-Requested-With",
+        "expose_headers": "Authorization,Content-Type,Accept,Origin,X-Requested-With",
+        "allow_credential": true,
+        "max_age": 3600
+      }
+    }
+  }'
+
+# Models status route
+curl -X PUT http://localhost:9180/apisix/admin/routes/5 \
+  -H 'X-API-KEY: edd1c9f034335f136f87ad84b625c8f1' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "uris": ["/models/status"],
+    "name": "email-guard-models-status",
+    "desc": "Email Guard Models Status Check",
+    "methods": ["GET", "OPTIONS"],
+    "upstream": {
+      "type": "roundrobin",
+      "nodes": {
+        "backend:8000": 1
       }
     },
     "plugins": {
@@ -120,7 +159,7 @@ curl -X PUT http://localhost:9180/apisix/admin/routes/3 \
   }'
 
 # History route
-curl -X PUT http://localhost:9180/apisix/admin/routes/4 \
+curl -X PUT http://localhost:9180/apisix/admin/routes/6 \
   -H 'X-API-KEY: edd1c9f034335f136f87ad84b625c8f1' \
   -H 'Content-Type: application/json' \
   -d '{

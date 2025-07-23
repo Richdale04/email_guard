@@ -6,7 +6,7 @@ import re
 from datetime import datetime
 
 # Add models directory to path
-models_dir = 'app/ai/models/'
+models_dir = '/app/ai/models/'
 
 # Try to import ML libraries
 try:
@@ -56,18 +56,6 @@ class CybersectonyDistilbertAnalyzer(ModelAnalyzer):
         print(f"Model path exists: {os.path.exists(model_path)}")
         
         if os.path.exists(model_path):
-            # Check if required files exist
-            required_files = ['config.json', 'pytorch_model.bin', 'tokenizer.json']
-            missing_files = []
-            for file in required_files:
-                file_path = os.path.join(model_path, file)
-                if not os.path.exists(file_path):
-                    missing_files.append(file)
-            
-            if missing_files:
-                print(f"✗ Missing files in {self.model_name}: {missing_files}")
-                return
-            
             try:
                 print(f"Loading tokenizer from: {model_path}")
                 self.tokenizer = AutoTokenizer.from_pretrained(model_path, local_files_only=True)
@@ -154,18 +142,6 @@ class AamoshDistilbertAnalyzer(ModelAnalyzer):
         print(f"Model path exists: {os.path.exists(model_path)}")
         
         if os.path.exists(model_path):
-            # Check if required files exist
-            required_files = ['config.json', 'pytorch_model.bin', 'tokenizer.json']
-            missing_files = []
-            for file in required_files:
-                file_path = os.path.join(model_path, file)
-                if not os.path.exists(file_path):
-                    missing_files.append(file)
-            
-            if missing_files:
-                print(f"✗ Missing files in {self.model_name}: {missing_files}")
-                return
-            
             try:
                 print(f"Loading tokenizer from: {model_path}")
                 self.tokenizer = AutoTokenizer.from_pretrained(model_path, local_files_only=True)
@@ -568,15 +544,32 @@ def get_model_info() -> Dict[str, Any]:
     models = []
     
     for analyzer_instance in analyzer.analyzers:
+        # Check if the model is actually loaded
+        if hasattr(analyzer_instance, 'model') and analyzer_instance.model is not None:
+            status = 'loaded'
+        elif hasattr(analyzer_instance, 'detector') and analyzer_instance.detector is not None:
+            status = 'loaded'
+        elif hasattr(analyzer_instance, 'tokenizer') and analyzer_instance.tokenizer is not None:
+            status = 'loaded'
+        else:
+            status = 'available'  # Rule-based or other non-ML analyzers
+        
         models.append({
             'name': analyzer_instance.model_name,
             'source': analyzer_instance.model_source,
-            'status': 'loaded' if hasattr(analyzer_instance, 'detector') and analyzer_instance.detector else 'available'
+            'status': status
         })
+    
+    # Check if we have any ML models loaded
+    ml_models_loaded = any(
+        m['status'] == 'loaded' and m['source'] != 'Rule-based' 
+        for m in models
+    )
     
     return {
         'total_models': len(models),
         'models': models,
+        'ml_models_loaded': ml_models_loaded,
         'primary_ml_available': PHISHING_DETECTOR_AVAILABLE,
         'primary_model': 'phishing-detection-py' if PHISHING_DETECTOR_AVAILABLE else 'rule-based'
     }

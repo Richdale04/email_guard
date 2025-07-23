@@ -85,6 +85,13 @@ async def scan_email_endpoint(request: EmailScanRequest, req: Request):
         # Scan email using AI models
         scan_results = scan_email(sanitized_text)
         
+        # Check if we got any results
+        if not scan_results:
+            raise HTTPException(
+                status_code=503, 
+                detail="AI models are not ready or failed to analyze. Please try again in a moment."
+            )
+        
         # Save to history
         save_scan_history(user_info['sub'], sanitized_text, scan_results)
         
@@ -100,6 +107,7 @@ async def scan_email_endpoint(request: EmailScanRequest, req: Request):
     except HTTPException:
         raise
     except Exception as e:
+        print(f"Scan error: {str(e)}")
         raise HTTPException(status_code=500, detail=f"Scan failed: {str(e)}")
 
 @app.get("/history")
@@ -141,6 +149,41 @@ async def logout_user(response: Response):
 async def health_check():
     """Health check endpoint"""
     return {"status": "healthy", "timestamp": datetime.now().isoformat()}
+
+@app.get("/models/status")
+async def models_status():
+    """Check if AI models are loaded and ready"""
+    try:
+        from scan import EMAIL_GUARD_AVAILABLE
+        if EMAIL_GUARD_AVAILABLE:
+            from ai.email_guard import get_model_info
+            model_info = get_model_info()
+            
+            # Check if we have ML models loaded
+            if model_info.get('ml_models_loaded', False):
+                status = "ready"
+            elif model_info.get('total_models', 0) > 0:
+                status = "partial"  # Only rule-based models available
+            else:
+                status = "not_ready"
+            
+            return {
+                "status": status,
+                "models": model_info,
+                "timestamp": datetime.now().isoformat()
+            }
+        else:
+            return {
+                "status": "not_available",
+                "error": "Email guard module not available",
+                "timestamp": datetime.now().isoformat()
+            }
+    except Exception as e:
+        return {
+            "status": "error",
+            "error": str(e),
+            "timestamp": datetime.now().isoformat()
+        }
 
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=8000)
